@@ -44,6 +44,7 @@ while inotifywait -e close_write main.py; do python3 ./main.py --dev; done
 
 ### Data Source
 - Expects Danish electricity price data (DK1 price area)
+- API: https://stromligning.dk/api/docs/ (free and public)
 - API response structure documented in `example-response.json`
 - Format: hourly prices with total, VAT, electricity cost, and transmission tariffs
 - Currency: kr/kWh
