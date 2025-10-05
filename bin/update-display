@@ -20,7 +20,7 @@ source venv/bin/activate
 # or if this is the first run
 if [ ! -f "venv/.requirements_installed" ] || [ requirements.txt -nt venv/.requirements_installed ]; then
     echo "Installing/updating requirements..."
-    pip3 install -r requirements.txt
+    pip3 install --upgrade -r requirements.txt
     touch venv/.requirements_installed
 fi
 

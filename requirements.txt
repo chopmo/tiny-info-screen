@@ -3,7 +3,7 @@ pillow
 requests
 
 # InkyPHAT display library
-inky[rpi,example-depends]
+inky
 
 # Fonts
 font-hanken-grotesk
