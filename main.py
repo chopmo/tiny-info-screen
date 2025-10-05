@@ -88,23 +88,20 @@ def render_prices(draw, upcoming_prices, scale_size):
         upcoming_prices: List of price entries
         scale_size: Font scaling factor
     """
-    medium_font = ImageFont.truetype(HankenGroteskMedium, int(14 * scale_size))
+    font = ImageFont.truetype(HankenGroteskMedium, int(18 * scale_size))
 
+    x_pos = 5
     y_pos = 5
+    line_height = int(18 * scale_size)
+
     for price in upcoming_prices:
-        # Parse time from localDate (format: "2025-10-04T00:00:00")
         price_time = datetime.fromisoformat(price["localDate"])
         time_str = price_time.strftime("%H:%M")
-
-        # Format price with 2 decimal places
         price_val = price["price"]["total"]
         price_str = f"{price_val:.2f}"
-
-        # Draw time and price on the same line
-        text = f"{time_str}  {price_str}"
-        draw.text((10, y_pos), text, BLACK_COLOR, font=medium_font)
-
-        y_pos += int(20 * scale_size)
+        text = f"{time_str} {price_str}"
+        draw.text((x_pos, y_pos), text, BLACK_COLOR, font=font)
+        y_pos += line_height
 
 
 def create_image(upcoming_prices, display_width, display_height, scale_size, palette):
@@ -183,7 +180,7 @@ def main():
 
     # Fetch electricity prices
     data = fetch_prices()
-    upcoming = get_upcoming_prices(data, hours=5)
+    upcoming = get_upcoming_prices(data, hours=8)
 
     # Create and output image
     img = create_image(upcoming, display_width, display_height, scale_size, palette)
