@@ -1,0 +1,27 @@
+#!/usr/bin/env python3
+"""Fetch current electricity prices and save to example-response.json"""
+
+import json
+import sys
+from pathlib import Path
+
+# Add parent directory to path to import price_fetcher
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
+from price_fetcher import fetch_prices
+
+if __name__ == "__main__":
+    try:
+        print("Fetching prices from API...")
+        data = fetch_prices()
+
+        output_file = Path(__file__).parent.parent / "example-response.json"
+
+        with open(output_file, 'w') as f:
+            json.dump(data, f, indent=2)
+
+        print(f"✓ Saved {len(data.get('prices', []))} price entries to {output_file}")
+
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
