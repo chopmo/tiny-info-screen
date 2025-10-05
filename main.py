@@ -3,13 +3,14 @@
 # This is based on the examples here:
 # https://github.com/pimoroni/inky
 import argparse
-from datetime import datetime
+from datetime import datetime, date
 import os
 from typing import Optional, Tuple
 from font_hanken_grotesk import HankenGroteskBold, HankenGroteskMedium
 from font_intuitive import Intuitive
 from PIL import Image, ImageDraw, ImageFont
 from price_fetcher import fetch_prices, get_upcoming_prices
+from odometer import get_expected_odometer
 
 
 # Color constants
@@ -113,6 +114,29 @@ def render_prices(draw, upcoming_prices, scale_size):
         y_pos += line_height
 
 
+def render_odometer(draw, display_height, scale_size):
+    """
+    Render expected odometer reading at the bottom of the image.
+
+    Args:
+        draw: PIL ImageDraw object
+        display_height: Display height in pixels (before rotation)
+        scale_size: Font scaling factor
+    """
+    # Lease started July 18, 2025
+    lease_start = date(2025, 7, 18)
+    expected_km = get_expected_odometer(lease_start)
+
+    font = ImageFont.truetype(HankenGroteskBold, int(18 * scale_size))
+    text = f"{expected_km} km"
+
+    # Position at bottom of portrait image (will be right side after rotation)
+    x_pos = 5
+    y_pos = display_height - int(25 * scale_size)
+
+    draw.text((x_pos, y_pos), text, BLACK_COLOR, font=font)
+
+
 def create_image(upcoming_prices, display_width, display_height, scale_size, palette):
     """
     Create the image to display.
@@ -139,6 +163,9 @@ def create_image(upcoming_prices, display_width, display_height, scale_size, pal
 
     # Draw prices
     render_prices(draw, upcoming_prices, scale_size)
+
+    # Draw odometer at bottom (before rotation)
+    render_odometer(draw, display_width, scale_size)
 
     # Rotate 90 degrees clockwise to get landscape orientation
     img = img.rotate(-90, expand=True)
