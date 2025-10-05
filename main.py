@@ -2,51 +2,60 @@
 
 # This is based on the examples here:
 # https://github.com/pimoroni/inky
+import argparse
 from font_hanken_grotesk import HankenGroteskBold, HankenGroteskMedium
 from font_intuitive import Intuitive
 from PIL import Image, ImageDraw, ImageFont
-
-# from inky.auto import auto
 
 
 def getsize(font, text):
     _, _, right, bottom = font.getbbox(text)
     return (right, bottom)
 
-# try:
-#     inky_display = auto(ask_user=True, verbose=True)
-# except TypeError:
-#     raise TypeError("You need to update the Inky library to >= v1.1.0")
 
-# inky_display.set_rotation(180)
-# try:
-#     inky_display.set_border(inky_display.RED)
-# except NotImplementedError:
-#     pass
+# Parse command line arguments
+parser = argparse.ArgumentParser(description='Display electricity prices on InkyPHAT or save to PNG')
+parser.add_argument('--dev', action='store_true', help='Development mode: save to PNG instead of displaying on InkyPHAT')
+args = parser.parse_args()
+
+# Initialize display if in production mode
+inky_display = None
+if not args.dev:
+    from inky.auto import auto
+    try:
+        inky_display = auto(ask_user=True, verbose=True)
+    except TypeError:
+        raise TypeError("You need to update the Inky library to >= v1.1.0")
+
+    inky_display.set_rotation(180)
+    try:
+        inky_display.set_border(inky_display.RED)
+    except NotImplementedError:
+        pass
 
 # Figure out scaling for display size
-
 scale_size = 1.0
 padding = 0
 
-# if inky_display.resolution == (400, 300):
-#     scale_size = 2.20
-#     padding = 15
+if inky_display:
+    if inky_display.resolution == (400, 300):
+        scale_size = 2.20
+        padding = 15
+    elif inky_display.resolution == (600, 448):
+        scale_size = 2.20
+        padding = 30
+    elif inky_display.resolution == (250, 122):
+        scale_size = 1.30
+        padding = -5
 
-# if inky_display.resolution == (600, 448):
-#     scale_size = 2.20
-#     padding = 30
-
-# if inky_display.resolution == (250, 122):
-#     scale_size = 1.30
-#     padding = -5
-
-scale_size = 1.30
-padding = -5
-# display_height = inky_display.height
-display_width = 250
-display_height = 122
-# display_width = inky_display.width
+    display_width = inky_display.width
+    display_height = inky_display.height
+else:
+    # Development mode defaults
+    scale_size = 1.30
+    padding = -5
+    display_width = 250
+    display_height = 122
 black_color = 0
 white_color = 1
 yellow_color = 2
@@ -115,7 +124,9 @@ name_y = int(y_top + ((y_bottom - y_top - name_h) / 2))
 draw.text((name_x, name_y), name, yellow_color, font=intuitive_font)
 
 # Display the completed name badge
-
-# inky_display.set_image(img)
-# inky_display.show()
-img.save("output/test.png")
+if inky_display:
+    inky_display.set_image(img)
+    inky_display.show()
+else:
+    img.save("output/test.png")
+    print("Development mode: Image saved to output/test.png")
