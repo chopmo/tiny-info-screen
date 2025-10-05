@@ -8,19 +8,26 @@ Display local electricity prices for the coming hours on a small e-paper display
 
 ## Development Commands
 
-**Install dependencies:**
+**Setup virtual environment:**
 ```bash
+python3 -m venv venv
+source venv/bin/activate
 pip3 install -r requirements.txt
 ```
 
-**Run the script:**
+**Run in development mode (saves to PNG):**
+```bash
+python3 main.py --dev
+```
+
+**Run in production mode (displays on InkyPHAT):**
 ```bash
 python3 main.py
 ```
 
 **Watch mode (auto-reload on file changes):**
 ```bash
-while inotifywait -e close_write main.py; do python3 ./main.py; done
+while inotifywait -e close_write main.py; do python3 ./main.py --dev; done
 ```
 
 ## Architecture
