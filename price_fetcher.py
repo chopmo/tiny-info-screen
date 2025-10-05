@@ -1,5 +1,8 @@
 """Fetch and parse electricity prices from Strømligning.dk API."""
 
+import json
+import os
+from pathlib import Path
 import requests
 from typing import Dict, List, Any
 
@@ -7,6 +10,9 @@ from typing import Dict, List, Any
 def fetch_prices(price_area: str = "DK1") -> Dict[str, Any]:
     """
     Fetch latest electricity prices from Strømligning.dk API.
+
+    In development mode (when DEV_MODE env var is set), reads from
+    example-response.json instead of making API requests.
 
     Args:
         price_area: Price area code (default: "DK1")
@@ -16,8 +22,20 @@ def fetch_prices(price_area: str = "DK1") -> Dict[str, Any]:
 
     Raises:
         requests.RequestException: If the API request fails
+        FileNotFoundError: If example-response.json doesn't exist in dev mode
     """
-    # Based on API docs at https://stromligning.dk/api/docs/
+    # Check for development mode
+    if os.getenv("DEV_MODE"):
+        cache_file = Path(__file__).parent / "example-response.json"
+        if not cache_file.exists():
+            raise FileNotFoundError(
+                f"Development mode enabled but {cache_file} not found. "
+                "Run ./bin/fetch-prices to create it."
+            )
+        with open(cache_file, 'r') as f:
+            return json.load(f)
+
+    # Production mode: fetch from API
     url = "https://stromligning.dk/api/prices"
     params = {
         "priceArea": price_area,

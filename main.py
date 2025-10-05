@@ -3,6 +3,7 @@
 # This is based on the examples here:
 # https://github.com/pimoroni/inky
 import argparse
+import os
 from font_hanken_grotesk import HankenGroteskBold, HankenGroteskMedium
 from font_intuitive import Intuitive
 from PIL import Image, ImageDraw, ImageFont
@@ -18,9 +19,16 @@ parser = argparse.ArgumentParser(description='Display electricity prices on Inky
 parser.add_argument('--dev', action='store_true', help='Development mode: save to PNG instead of displaying on InkyPHAT')
 args = parser.parse_args()
 
+# Set development mode environment variable
+if args.dev:
+    os.environ["DEV_MODE"] = "1"
+
+# Check if we're in development mode
+dev_mode = os.getenv("DEV_MODE")
+
 # Initialize display if in production mode
 inky_display = None
-if not args.dev:
+if not dev_mode:
     from inky.auto import auto
     try:
         inky_display = auto(ask_user=True, verbose=True)
