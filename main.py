@@ -98,7 +98,7 @@ def render_prices(draw, upcoming_prices, scale_size):
 
         # Format price with 2 decimal places
         price_val = price["price"]["total"]
-        price_str = f"{price_val:.2f} kr"
+        price_str = f"{price_val:.2f}"
 
         # Draw time and price on the same line
         text = f"{time_str}  {price_str}"
@@ -121,17 +121,21 @@ def create_image(upcoming_prices, display_width, display_height, scale_size, pal
     Returns:
         PIL Image object
     """
-    img = Image.new("P", (display_width, display_height))
+    # Create image in portrait orientation (will be rotated 90 degrees)
+    img = Image.new("P", (display_height, display_width))
     img.putpalette(palette)
     draw = ImageDraw.Draw(img)
 
     # Fill background with white
-    for y in range(0, display_height):
-        for x in range(0, display_width):
+    for y in range(0, display_width):
+        for x in range(0, display_height):
             img.putpixel((x, y), WHITE_COLOR)
 
     # Draw prices
     render_prices(draw, upcoming_prices, scale_size)
+
+    # Rotate 90 degrees clockwise to get landscape orientation
+    img = img.rotate(-90, expand=True)
 
     return img
 
