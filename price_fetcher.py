@@ -40,6 +40,8 @@ def fetch_prices(price_area: str = "DK1") -> Dict[str, Any]:
     url = "https://stromligning.dk/api/prices"
     params = {
         "priceArea": price_area,
+        "supplierId": "konstant_c",
+        "productId": "verdo_variabel_timepris",
         "aggregation": "1h"
     }
 
