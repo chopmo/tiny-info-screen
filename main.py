@@ -154,14 +154,9 @@ def create_image(upcoming_prices, display_width, display_height, scale_size, pal
         PIL Image object
     """
     # Create image in portrait orientation (will be rotated 90 degrees)
-    img = Image.new("P", (display_height, display_width))
+    img = Image.new("P", (display_height, display_width), WHITE_COLOR)
     img.putpalette(palette)
     draw = ImageDraw.Draw(img)
-
-    # Fill background with white
-    for y in range(0, display_width):
-        for x in range(0, display_height):
-            img.putpixel((x, y), WHITE_COLOR)
 
     # Draw prices
     render_prices(draw, upcoming_prices, scale_size)
@@ -170,7 +165,7 @@ def create_image(upcoming_prices, display_width, display_height, scale_size, pal
     render_odometer(draw, display_width, scale_size)
 
     # Rotate 90 degrees clockwise to get landscape orientation
-    img = img.rotate(-90, expand=True)
+    img = img.rotate(-90, expand=True, fillcolor=WHITE_COLOR)
 
     return img
 
