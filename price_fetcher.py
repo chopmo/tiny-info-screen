@@ -19,7 +19,10 @@ def fetch_prices(price_area: str = "DK1") -> Dict[str, Any]:
     """
     # Based on API docs at https://stromligning.dk/api/docs/
     url = "https://stromligning.dk/api/prices"
-    params = {"priceArea": price_area}
+    params = {
+        "priceArea": price_area,
+        "aggregation": "1h"
+    }
 
     response = requests.get(url, params=params, timeout=10)
     response.raise_for_status()
@@ -46,8 +49,8 @@ if __name__ == "__main__":
         data = fetch_prices()
         prices = get_hourly_prices(data)
         print(f"Fetched {len(prices)} hourly prices")
-        if prices:
-            first = prices[0]
-            print(f"First entry: {first['localDate']} - {first['price']['total']} {first['price']['unit']}")
+        print("\nNext 4 hours:")
+        for price in prices[:4]:
+            print(f"{price['localDate']} - {price['price']['total']:.3f} {price['price']['unit']}")
     except Exception as e:
         print(f"Error fetching prices: {e}")
