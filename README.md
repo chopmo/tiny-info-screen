@@ -32,6 +32,28 @@ Production mode (displays on InkyPHAT):
 python3 main.py
 ```
 
+Or use the helper script:
+
+```bash
+./bin/update-display
+```
+
+## Scheduled Updates (Cron)
+
+To automatically update the display every hour on a Raspberry Pi:
+
+1. Edit your crontab:
+```bash
+crontab -e
+```
+
+2. Add this line to run every hour:
+```bash
+0 * * * * /home/jtj/tiny-info-screen/bin/update-display >> /home/jtj/tiny-info-screen/cron.log 2>&1
+```
+
+The display will now update automatically every hour on the hour. Check `cron.log` for any errors.
+
 ## Development
 
 Use this to re-execute whenever the file changes:

@@ -1,0 +1,28 @@
+#!/bin/bash
+# Update the InkyPHAT display with current electricity prices
+
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
+
+cd "$PROJECT_DIR"
+
+# Create virtual environment if it doesn't exist
+if [ ! -d "venv" ]; then
+    echo "Creating virtual environment..."
+    python3 -m venv venv
+fi
+
+# Activate virtual environment
+source venv/bin/activate
+
+# Install/update requirements if requirements.txt has changed
+# or if this is the first run
+if [ ! -f "venv/.requirements_installed" ] || [ requirements.txt -nt venv/.requirements_installed ]; then
+    echo "Installing/updating requirements..."
+    pip3 install -q -r requirements.txt
+    touch venv/.requirements_installed
+fi
+
+# Run the script
+python3 main.py
