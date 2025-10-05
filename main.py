@@ -82,6 +82,7 @@ def create_palette():
 def render_prices(draw, upcoming_prices, scale_size):
     """
     Render electricity prices on the image.
+    Prices that are 10% higher than average are shown in yellow.
 
     Args:
         draw: PIL ImageDraw object
@@ -89,6 +90,11 @@ def render_prices(draw, upcoming_prices, scale_size):
         scale_size: Font scaling factor
     """
     font = ImageFont.truetype(HankenGroteskMedium, int(18 * scale_size))
+
+    # Calculate average price
+    total_prices = [p["price"]["total"] for p in upcoming_prices]
+    avg_price = sum(total_prices) / len(total_prices)
+    high_threshold = avg_price * 1.1
 
     x_pos = 5
     y_pos = 5
@@ -100,7 +106,10 @@ def render_prices(draw, upcoming_prices, scale_size):
         price_val = price["price"]["total"]
         price_str = f"{price_val:.2f}"
         text = f"{time_str} {price_str}"
-        draw.text((x_pos, y_pos), text, BLACK_COLOR, font=font)
+
+        # Use yellow for high prices, black for normal
+        color = YELLOW_COLOR if price_val > high_threshold else BLACK_COLOR
+        draw.text((x_pos, y_pos), text, color, font=font)
         y_pos += line_height
 
 
