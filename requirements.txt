@@ -1,13 +1,10 @@
+# Core dependencies
 pillow
 requests
-beautifulsoup4
-fonts
-font-source-sans-pro
-font-source-serif-pro
-font-fredoka-one
+
+# InkyPHAT display library
+inky[rpi,example-depends]
+
+# Fonts
 font-hanken-grotesk
 font-intuitive
-geocoder
-pandas==2.2.3  # avoid 2.3.0 with no piwheels wheel
-seaborn
-wikiquotes
