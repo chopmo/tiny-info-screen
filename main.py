@@ -3,10 +3,12 @@
 # This is based on the examples here:
 # https://github.com/pimoroni/inky
 import argparse
+from datetime import datetime
 import os
 from font_hanken_grotesk import HankenGroteskBold, HankenGroteskMedium
 from font_intuitive import Intuitive
 from PIL import Image, ImageDraw, ImageFont
+from price_fetcher import fetch_prices, get_upcoming_prices
 
 
 def getsize(font, text):
@@ -75,61 +77,40 @@ palette = [
 ]
 palette.extend([0] * (768 - len(palette)))
 
-# Create a new canvas to draw on
+# Fetch electricity prices
+data = fetch_prices()
+upcoming = get_upcoming_prices(data, hours=5)
 
+# Create a new canvas to draw on
 img = Image.new("P", (display_width, display_height))
 img.putpalette(palette)
 draw = ImageDraw.Draw(img)
 
 # Load the fonts
+small_font = ImageFont.truetype(HankenGroteskMedium, int(12 * scale_size))
+medium_font = ImageFont.truetype(HankenGroteskMedium, int(14 * scale_size))
 
-intuitive_font = ImageFont.truetype(Intuitive, int(22 * scale_size))
-hanken_bold_font = ImageFont.truetype(HankenGroteskBold, int(35 * scale_size))
-hanken_medium_font = ImageFont.truetype(HankenGroteskMedium, int(16 * scale_size))
-
-# Grab the name to be displayed
-
-name = "Chopmo 2"
-
-# Top and bottom y-coordinates for the white strip
-
-y_top = int(display_height * (5.0 / 10.0))
-y_bottom = y_top + int(display_height * (4.0 / 10.0))
-
-# Draw the red, white, and red strips
-
-for y in range(0, y_top):
-    for x in range(0, display_width):
-        img.putpixel((x, y), black_color)
-
-for y in range(y_top, y_bottom):
+# Fill background with white
+for y in range(0, display_height):
     for x in range(0, display_width):
         img.putpixel((x, y), white_color)
 
-for y in range(y_bottom, display_height):
-    for x in range(0, display_width):
-        img.putpixel((x, y), black_color)
+# Draw prices
+y_pos = 5
+for i, price in enumerate(upcoming):
+    # Parse time from localDate (format: "2025-10-04T00:00:00")
+    price_time = datetime.fromisoformat(price["localDate"])
+    time_str = price_time.strftime("%H:%M")
 
-# Calculate the positioning and draw the "Hello" text
-hello_text = "Hello"
-hello_w, hello_h = getsize(hanken_bold_font, hello_text)
-hello_x = int((display_width - hello_w) / 2)
-hello_y = 0 + padding
-draw.text((hello_x, hello_y), hello_text, white_color, font=hanken_bold_font)
+    # Format price with 2 decimal places
+    price_val = price["price"]["total"]
+    price_str = f"{price_val:.2f} kr"
 
-# Calculate the positioning and draw the "my name is" text
-mynameis_text = "my name is"
-mynameis_w, mynameis_h = getsize(hanken_medium_font, mynameis_text)
-mynameis_x = int((display_width - mynameis_w) / 2)
-mynameis_y = hello_h + padding
-draw.text((mynameis_x, mynameis_y), mynameis_text, white_color, font=hanken_medium_font)
+    # Draw time and price on the same line
+    text = f"{time_str}  {price_str}"
+    draw.text((10, y_pos), text, black_color, font=medium_font)
 
-# Calculate the positioning and draw the name text
-
-name_w, name_h = getsize(intuitive_font, name)
-name_x = int((display_width - name_w) / 2)
-name_y = int(y_top + ((y_bottom - y_top - name_h) / 2))
-draw.text((name_x, name_y), name, yellow_color, font=intuitive_font)
+    y_pos += int(20 * scale_size)
 
 # Display the completed name badge
 if inky_display:
