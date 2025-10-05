@@ -2,3 +2,4 @@ output
 /venv
 .claude
 __pycache__
+example-response.json
