@@ -5,6 +5,18 @@ The idea is to make it easy to see when it's least expensive to charge our cars.
 
 ## Setup
 
+### Raspberry Pi Setup
+
+First, install system dependencies:
+
+```bash
+./bin/setup-raspberry-pi
+```
+
+This installs required libraries for Pillow, fonts, and the InkyPHAT display.
+
+### Manual Setup
+
 Create and activate virtual environment:
 
 ```bash
