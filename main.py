@@ -27,10 +27,12 @@ def init_display():
     except TypeError:
         raise TypeError("You need to update the Inky library to >= v1.1.0")
 
-    display.set_rotation(180)
+    # Note: rotation is handled by rotating the image before display
+    # set_rotation() is not available on newer inky versions
+
     try:
         display.set_border(display.RED)
-    except NotImplementedError:
+    except (NotImplementedError, AttributeError):
         pass
 
     return display
