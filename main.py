@@ -13,9 +13,9 @@ from price_fetcher import fetch_prices, get_upcoming_prices
 from odometer import get_expected_odometer
 
 
-# Color constants
-BLACK_COLOR = 0
-WHITE_COLOR = 1
+# Color constants (inverted for InkyPHAT)
+BLACK_COLOR = 1
+WHITE_COLOR = 0
 YELLOW_COLOR = 2
 
 
