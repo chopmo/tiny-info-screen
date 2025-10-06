@@ -59,12 +59,12 @@ To automatically update the display every hour on a Raspberry Pi:
 crontab -e
 ```
 
-2. Add this line to run every hour:
+2. Add this line to run every hour at 5 minutes past:
 ```bash
-0 * * * * /home/jtj/tiny-info-screen/bin/update-display >> /home/jtj/tiny-info-screen/cron.log 2>&1
+5 * * * * /home/jtj/tiny-info-screen/bin/update-display >> /home/jtj/tiny-info-screen/cron.log 2>&1
 ```
 
-The display will now update automatically every hour on the hour. Check `cron.log` for any errors.
+The display will now update automatically every hour at 5 minutes past. Check `cron.log` for any errors.
 
 ## Development
 
